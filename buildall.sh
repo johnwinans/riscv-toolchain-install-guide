@@ -24,6 +24,6 @@ cd riscv-gnu-toolchain
 
 # configure and build qemu
 cd ../qemu
-./configure --target-list=riscv32-softmmu --prefix=$INSTALL_DIR/rv32i
+./configure --target-list=riscv32-softmmu --prefix=$INSTALL_DIR
 #make
 #make install
