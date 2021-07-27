@@ -1,0 +1,8 @@
+[submodule "riscv-gnu-toolchain"]
+	path = riscv-gnu-toolchain
+	url = https://github.com/riscv/riscv-gnu-toolchain
+	branch = 2021.06.26
+[submodule "qemu"]
+	path = qemu
+	url = https://git.qemu.org/git/qemu.git
+	branch = v5.2.0
