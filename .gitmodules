@@ -6,3 +6,6 @@
 	path = qemu
 	url = https://git.qemu.org/git/qemu.git
 	branch = v5.2.0
+[submodule "gdb-dashboard"]
+	path = gdb-dashboard
+	url = https://github.com/cyrus-and/gdb-dashboard.git
