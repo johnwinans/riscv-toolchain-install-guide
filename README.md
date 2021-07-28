@@ -165,8 +165,8 @@ The section code surrounding this addition will then look like this:
             registers.append((name, string_value, changed))
 ```
 
-Keep in mind that python cares about white space (like FORTRAN, COBOL and numerous assembley languages!)
-therefore the added lines have to be indented using spaces (not tabs) such that they align with the
+Keep in mind that python cares about white space (like FORTRAN, COBOL and numerous assembly languages!)
+therefore the added lines have to be indented, in this case, using spaces (not tabs) such that they align with the
 existing `if  '.' in name:` line as can be seen above!
 
 
