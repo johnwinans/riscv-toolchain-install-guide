@@ -37,7 +37,7 @@ export PATH=${HOME}/projects/riscv/install/rv32i/bin:${PATH}
 
 ```bash
 which qemu-system-riscv32
-qemu-system-riscv32 -machine help
+qemu-system-riscv32 --version
 qemu-system-riscv32 -machine help
 ```
 
@@ -46,7 +46,7 @@ The output of the above commands on my box looks like this:
 ```
 winans@x570:~$ which qemu-system-riscv32
 /home/winans/projects/riscv/install/rv32i/bin/qemu-system-riscv32
-winans@x570:~$ qemu-system-riscv32 -machine help                    
+winans@x570:~$ qemu-system-riscv32 --version
 QEMU emulator version 5.2.0 (v5.2.0)
 Copyright (c) 2003-2020 Fabrice Bellard and the QEMU Project developers
 winans@x570:~$ qemu-system-riscv32 -machine help
@@ -94,7 +94,7 @@ winans@x570:~$
 
 BE CAREFUL THAT YOU DO NOT CLOBBER ANY EXISTING ~/.gdbinit FILE!!!!
 
-If installed the tools in the default location then the following will copy the gdb-dashboard 
+If the tools are installed in the default location then the following will copy the gdb-dashboard 
 script into your home directory (possibly clobbering any existing one!)
 so that it will be used when gdb is run:
 
@@ -102,7 +102,7 @@ so that it will be used when gdb is run:
 cp ~/projects/riscv/riscv-toolchain-install-guide/gdb-dashboard/.gdbinit ~
 ```
 
-Note that there is a problem with qemu v5.2.0 in that it tells the gdb dashboard that there are 
+Note that there is a problem with qemu v5.2.0 in that it tells gdb that there are 
 more registers than there really ARE.  Thus the dashboard will complain like this:
 
 ```
@@ -136,8 +136,8 @@ error: Could not fetch register "dscratch"; remote failure reply 'E14'
 -----------------------------------------------------------------------------------------------------------
 ```
 
-A simple hack to 'fix' this problem until there is a qemu release to address it is to filter
-out the incorrect register names by adding the following lines to the ~/.gdbinit file starting
+A simple hack to 'fix' this problem (until there is a qemu release to address it) is to filter
+out the incorrect register names by adding the following lines to the `~/.gdbinit` file starting
 after line number 1945:
 
 ```
@@ -218,7 +218,7 @@ winans@x570:~/projects/riscv/riscv-toolchain-install-guide$ cd test-freestanding
 winans@x570:~/projects/riscv/riscv-toolchain-install-guide/test-freestanding$ make world
 rm -f prog prog.lst  *.o *.s *.lst *.bin *.srec
 riscv32-unknown-elf-gcc -Wall -Werror -g -Wcast-align -ffreestanding  -fno-pic -O2  -march=rv32ima -mabi=ilp32 -c -o crt0.o crt0.S
-riscv32-unknown-elf-gcc -Wall -Werror -g -Wcast-align -ffreestanding  -fno-pic -O2  -nostdlib -Wl,-T,pulp.ld -march=rv32ima -mabi=ilp32 -o prog crt0.o -lc -lgcc
+riscv32-unknown-elf-gcc -Wall -Werror -g -Wcast-align -ffreestanding  -fno-pic -O2  -nostdlib -Wl,-T,vanilla.ld -march=rv32ima -mabi=ilp32 -o prog crt0.o -lc -lgcc
 riscv32-unknown-elf-size -A -x prog
 prog  :
 section              size         addr
