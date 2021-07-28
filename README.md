@@ -246,9 +246,7 @@ winans@x570:~/projects/riscv/riscv-toolchain-install-guide/test-freestanding$
 qemu-system-riscv32 -machine virt -m 128M -bios none -device loader,file=./prog -nographic -s
 ```
 
-Your output should look like this and then qemu should hang (sort of... don't leave it hanging 
-like this and walk away as qemu will be consuming 100% of at least one of your cores until you
-halt it as shown below!)
+Your output should look like this and then qemu should hang (until you halt it as shown below.)
 
 ```
 winans@x570:~/projects/riscv/riscv-toolchain-install-guide/test-freestanding$ qemu-system-riscv32 -machine virt -m 128M -bios none -device loader,file=./prog -nographic -s

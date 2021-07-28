@@ -1,0 +1,80 @@
+
+ARCH=riscv32-unknown-elf
+
+
+CC=$(ARCH)-gcc
+CXX=$(ARCH)-g++
+AS=$(ARCH)-as
+LD=$(ARCH)-ld
+OBJCOPY=$(ARCH)-objcopy
+OBJDUMP=$(ARCH)-objdump
+SIZE=$(ARCH)-size
+AR=$(ARCH)-ar
+RANLIB=$(ARCH)-ranlib
+
+MARCH=rv32ima
+MABI=ilp32
+
+CFLAGS+=-Wall -Werror
+CFLAGS+=-g
+CFLAGS+=-Wcast-align
+
+CFLAGS+=-ffreestanding 
+CFLAGS+=-fno-pic
+#CFLAGS+=-fomit-frame-pointer
+
+TARGET_ARCH+=-march=$(MARCH)
+TARGET_ARCH+=-mabi=$(MABI)
+
+LDFLAGS+=-nostdlib
+ASFLAGS+=$(CFLAGS)
+
+
+CLEAN_DIRS=$(SUBDIRS:%=clean-%)
+ALL_DIRS=$(SUBDIRS:%=all-%)
+
+OBJDUMPFLAGS+=-Mnumeric,no-aliases
+
+.PHONY: all clean world $(CLEAN_DIRS) $(ALL_DIRS)
+
+all:: $(ALL_DIRS)
+
+
+%.bin : %
+	$(OBJCOPY) $< -O binary $@
+
+%.lst : %
+	$(OBJDUMP) $(OBJDUMPFLAGS) -dr $< > $<.lst
+
+% : %.o
+	$(LINK.c) $(TARGET_ARCH) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+	$(SIZE) -x -A $@
+
+%.s: %.c
+	$(COMPILE.c) -S -o $@ $<
+
+%.s: %.cc
+	$(COMPILE.cc) -S -o $@ $<
+
+%.o: %.c
+	$(COMPILE.c) -o $@ $<
+
+%.o: %.S
+	$(COMPILE.c) -o $@ $<
+
+%.o: %.cc
+	$(COMPILE.cc) -o $@ $<
+
+%.srec: %
+	$(OBJCOPY) $< -O srec $@ 
+
+
+clean:: $(CLEAN_DIRS)
+
+$(ALL_DIRS)::
+	$(MAKE) -C $(@:all-%=%) all
+
+$(CLEAN_DIRS)::
+	$(MAKE) -C $(@:clean-%=%) clean
+
+world:: clean all
