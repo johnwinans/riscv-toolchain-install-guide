@@ -5,27 +5,27 @@ freestanding RISC-V C/C++ programs.
 Note this repository is mainly a set links to the submodules and versions that I use as 
 described below.
 
-1. Clone this repo:
+## Clone this repo:
 
 ```bash
 git clone https://github.com/johnwinans/riscv-toolchain-install-guide.git
 ```
 
-2. Update the sumbodules & checkout the correct versions
+## Update the sumbodules & checkout the correct versions
 
 ```bash
 ./installdeps.sh
 ./setup.sh
 ```
 
-3. Configure, build, and install the GNU toolchain and qemu
+## Configure, build, and install the GNU toolchain and qemu
 (Note that this can take the better part of an hour to complete!)
 
 ```bash
 ./buildall.sh
 ```
 
-4. Add the new tools to your PATH variable by altering your PATH
+## Add the new tools to your PATH variable by altering your PATH
 If you are using bash and installed the tools in the default location then
 adding the following to the end of your .bashrc file will suffice: 
 
@@ -33,7 +33,7 @@ adding the following to the end of your .bashrc file will suffice:
 export PATH=${HOME}/projects/riscv/install/rv32i/bin:${PATH}
 ```
 
-5. Give qemu a basic sanity check
+## Give qemu a basic sanity check
 
 ```bash
 which qemu-system-riscv32
@@ -60,7 +60,7 @@ virt                 RISC-V VirtIO board
 winans@x570:~$
 ```
 
-6. Give the gnu toolchain a basic sanity check
+## Give the gnu toolchain a basic sanity check
 
 ```bash
 which riscv32-unknown-elf-as
@@ -90,7 +90,7 @@ winans@x570:~$
 ```
 
 
-7. Install the gdb dashboard if you prefer
+## Install the gdb dashboard if you prefer
 
 BE CAREFUL THAT YOU DO NOT CLOBBER ANY EXISTING ~/.gdbinit FILE!!!!
 
@@ -171,7 +171,7 @@ existing `if  '.' in name:` line as can be seen above!
 
 
 
-8. Build a simple test app
+## Build a simple test app
 
 ```
 cd test-toolchain
@@ -207,7 +207,7 @@ winans@x570:~/projects/riscv/riscv-toolchain-install-guide/test-freestanding$
 ```
 
 
-9. Run qemu and gdb to make sure everything works
+## Run qemu and gdb to make sure everything works
 
 ```
 qemu-system-riscv32 -machine virt -m 128M -bios none -device loader,file=./prog -nographic -s
@@ -218,7 +218,7 @@ like this and walk away as qemu will be consuming 100% of at least one of your c
 halt it as shown below!)
 
 ```
-winans@x570:~/projects/riscv/riscv-toolchain-install-guide/test-freestanding$ qemu-system-riscv32 -machine virt -m 128M -bios none -device loader,file=./prog -nographic -gdb tcp::1234
+winans@x570:~/projects/riscv/riscv-toolchain-install-guide/test-freestanding$ qemu-system-riscv32 -machine virt -m 128M -bios none -device loader,file=./prog -nographic -s
 Hello World!
 ```
 
