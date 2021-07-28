@@ -26,7 +26,7 @@ git clone https://github.com/johnwinans/riscv-toolchain-install-guide.git
 ```
 
 4. Add the new tools to your PATH variable by altering your PATH
-If you are using bash and installed the tools ion the default location then
+If you are using bash and installed the tools in the default location then
 adding the following to the end of your .bashrc file will suffice: 
 
 ```bash
@@ -94,7 +94,8 @@ winans@x570:~$
 
 BE CAREFUL THAT YOU DO NOT CLOBBER ANY EXISTING ~/.gdbinit FILE!!!!
 
-The following will copy the gdb-dashboard script into your home directory (possibly clobbering any existing one!)
+If installed the tools in the default location then the following will copy the gdb-dashboard 
+script into your home directory (possibly clobbering any existing one!)
 so that it will be used when gdb is run:
 
 ```bash
@@ -105,7 +106,34 @@ Note that there is a problem with qemu v5.2.0 in that it tells the gdb dashboard
 more registers than there really ARE.  Thus the dashboard will complain like this:
 
 ```
-XXX
+0x00001000 in ?? ()
+--- Assembly -----------------------------------------------------------------
+ 0x00001000  ? auipc    t0,0x0
+ 0x00001004  ? addi    a2,t0,40
+ 0x00001008  ? csrr    a0,mhartid
+ 0x0000100c  ? lw    a1,32(t0)
+ 0x00001010  ? lw    t0,24(t0)
+ 0x00001014  ? jr    t0
+ 0x00001018  ? unimp
+ 0x0000101a  ? 0x8000
+ 0x0000101c  ? unimp
+ 0x0000101e  ? unimp
+--- Breakpoints --------------------------------------------------------------
+--- Expressions --------------------------------------------------------------
+--- History ------------------------------------------------------------------
+--- Memory -------------------------------------------------------------------
+--- Registers ----------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 540, in render
+  File "<string>", line 1945, in lines
+error: Could not fetch register "dscratch"; remote failure reply 'E14'
+--- Source -------------------------------------------------------------------
+--- Stack --------------------------------------------------------------------
+[0] from 0x00001000
+--- Threads ------------------------------------------------------------------
+[1] id 1 from 0x00001000
+--- Variables ----------------------------------------------------------------
+------------------------------------------------------------------------------
 ```
 
 A simple hack to 'fix' this problem until there is a qemu release to address it is to filter
@@ -140,3 +168,65 @@ The section code surrounding this addition will then look like this:
 Keep in mind that python cares about white space (like FORTRAN, COBOL and numerous assembley languages!)
 therefore the added lines have to be indented using spaces (not tabs) such that they align with the
 existing `if  '.' in name:` line as can be seen above!
+
+
+
+8. Build a simple test app
+
+```
+cd test-toolchain
+make world
+```
+
+Your output should look like this:
+
+```
+winans@x570:~/projects/riscv/riscv-toolchain-install-guide$ cd test-freestanding
+winans@x570:~/projects/riscv/riscv-toolchain-install-guide/test-freestanding$ make world
+rm -f prog prog.lst  *.o *.s *.lst *.bin *.srec
+riscv32-unknown-elf-gcc -Wall -Werror -g -Wcast-align -ffreestanding  -fno-pic -O2  -march=rv32ima -mabi=ilp32 -c -o crt0.o crt0.S
+riscv32-unknown-elf-gcc -Wall -Werror -g -Wcast-align -ffreestanding  -fno-pic -O2  -nostdlib -Wl,-T,pulp.ld -march=rv32ima -mabi=ilp32 -o prog crt0.o -lc -lgcc
+riscv32-unknown-elf-size -A -x prog
+prog  :
+section              size         addr
+.text                0x30   0x80000000
+.rodata               0xe   0x80000030
+.eh_frame            0x2c   0x80000040
+.riscv.attributes    0x28          0x0
+.debug_line          0x82          0x0
+.debug_line_str      0x38          0x0
+.debug_info          0x24          0x0
+.debug_abbrev        0x14          0x0
+.debug_aranges       0x20          0x0
+.debug_str           0x46          0x0
+Total               0x1ea
+
+
+riscv32-unknown-elf-objdump -Mnumeric,no-aliases -dr prog > prog.lst
+winans@x570:~/projects/riscv/riscv-toolchain-install-guide/test-freestanding$ 
+```
+
+
+9. Run qemu and gdb to make sure everything works
+
+```
+qemu-system-riscv32 -machine virt -m 128M -bios none -device loader,file=./prog -nographic -s
+```
+
+Your output should look like this and then qemu should hang (sort of... don't leave it hanging 
+like this and walk away as qemu will be consuming 100% of at least one of your cores until you
+halt it as shown below!)
+
+```
+winans@x570:~/projects/riscv/riscv-toolchain-install-guide/test-freestanding$ qemu-system-riscv32 -machine virt -m 128M -bios none -device loader,file=./prog -nographic -gdb tcp::1234
+Hello World!
+```
+
+To halt and terminate qemu, press `CTRL+A` and then press `x` and you should see the following:
+
+```
+QEMU: Terminated
+winans@x570:~/projects/riscv/riscv-toolchain-install-guide/test-freestanding$
+```
+
+Once you get this far, you are ready to start experimenting with your own freestanding programs!
