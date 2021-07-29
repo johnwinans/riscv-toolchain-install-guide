@@ -14,7 +14,7 @@ echo "Installing into: $INSTALL_DIR"
 
 # FYI - These should have already been run once before the first time this script is run:
 # ./installdeps.sh
-# ./config.sh
+# ./setup.sh
 
 # configure and build gcc & friends
 cd riscv-gnu-toolchain
