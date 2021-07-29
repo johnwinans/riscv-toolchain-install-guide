@@ -207,7 +207,7 @@ Once corrected, the gdb dashboard will look like this:
 ## Build a simple test app
 
 ```
-cd test-toolchain
+cd test-freestanding
 make world
 ```
 
