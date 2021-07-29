@@ -240,7 +240,7 @@ winans@x570:~/projects/riscv/riscv-toolchain-install-guide/test-freestanding$
 ```
 
 
-## Run qemu and gdb to make sure everything works
+## Run qemu to make sure it works
 
 ```
 qemu-system-riscv32 -machine virt -m 128M -bios none -device loader,file=./prog -nographic -s
@@ -259,5 +259,79 @@ To halt and terminate qemu, press `CTRL+A` and then press `x` and you should see
 QEMU: Terminated
 winans@x570:~/projects/riscv/riscv-toolchain-install-guide/test-freestanding$
 ```
+
+
+
+## Run qemu and gdb together to make sure everything works
+
+In one terminal run this command to stgart up qemu but tell it to wait (with the `-S` option)
+for gdb to connect before any instructions begin executing:
+
+```
+qemu-system-riscv32 -machine virt -m 128M -bios none -device loader,file=./prog -nographic -s -S
+```
+
+In a different terminal (in the same directory that you ran the qemu emulator above) 
+start up gdb and connect it to qemu:
+
+```
+riscv32-unknown-elf-gdb ./prog
+target remote :1234
+```
+
+...which should look like this:
+
+```
+winans@x570:~/projects/riscv/riscv-toolchain-install-guide/test-freestanding$ riscv32-unknown-elf-gdb ./prog
+GNU gdb (GDB) 10.1
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "--host=x86_64-pc-linux-gnu --target=riscv32-unknown-elf".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<https://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./prog...
+>>> target remote :1234
+Remote debugging using :1234
+0x00001000 in ?? ()
+--- Assembly ----------------------------------------------------------------------------------------------
+ 0x00001000  ? auipc    t0,0x0
+ 0x00001004  ? addi    a2,t0,40
+ 0x00001008  ? csrr    a0,mhartid
+ 0x0000100c  ? lw    a1,32(t0)
+ 0x00001010  ? lw    t0,24(t0)
+ 0x00001014  ? jr    t0
+ 0x00001018  ? unimp
+ 0x0000101a  ? 0x8000
+ 0x0000101c  ? unimp
+ 0x0000101e  ? unimp
+--- Breakpoints -------------------------------------------------------------------------------------------
+--- Expressions -------------------------------------------------------------------------------------------
+--- History -----------------------------------------------------------------------------------------------
+--- Memory ------------------------------------------------------------------------------------------------
+--- Registers ---------------------------------------------------------------------------------------------
+  zero 0x00000000   ra 0x00000000   sp 0x00000000   gp 0x00000000   tp 0x00000000   t0 0x00000000   t1 0x00000000
+    t2 0x00000000   fp 0x00000000   s1 0x00000000   a0 0x00000000   a1 0x00000000   a2 0x00000000   a3 0x00000000
+    a4 0x00000000   a5 0x00000000   a6 0x00000000   a7 0x00000000   s2 0x00000000   s3 0x00000000   s4 0x00000000
+    s5 0x00000000   s6 0x00000000   s7 0x00000000   s8 0x00000000   s9 0x00000000  s10 0x00000000  s11 0x00000000
+    t3 0x00000000   t4 0x00000000   t5 0x00000000   t6 0x00000000   pc 0x00001000
+--- Source ------------------------------------------------------------------------------------------------
+--- Stack -------------------------------------------------------------------------------------------------
+[0] from 0x00001000
+--- Threads -----------------------------------------------------------------------------------------------
+[1] id 1 from 0x00001000
+--- Variables ---------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------
+>>>   
+```
+
 
 Once you get this far, you are ready to start experimenting with your own freestanding programs!

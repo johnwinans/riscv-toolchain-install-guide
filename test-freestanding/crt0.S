@@ -24,7 +24,7 @@ _start:     // This has to match the entry address in the ld script!!
     bne     x0,x7,1b            // if the character is NOT \0 then keep going
 
 2:
-    // disable ALL irqs and traps
+    // disable ALL irqs
     csrw    mie,x0
 
     // Spin while waiting for an interrupt that can never arrive. (Seize the hart.)
