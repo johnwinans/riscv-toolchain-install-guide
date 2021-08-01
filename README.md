@@ -1,4 +1,4 @@
-# riscv-toolchain-install-guide
+# RISC-V Toolchain Install Guide
 How to download and install qemu and the GNU toolchain on Ubuntu 20.04 for building and running 
 freestanding RISC-V Assembler and C/C++ programs.
 
@@ -9,9 +9,7 @@ described below.
 
 - [Installation and Setup](https://youtu.be/iWQRV-KJ7tQ)
 
-A playlist of these and other RISC-V videos I have recorded:
-
-- [RISC-V Lectures](https://www.youtube.com/playlist?list=PL3by7evD3F53Dz2RiB47Ztp9l_piGVuus)
+A playlist of RISC-V videos I have recorded: [RISC-V Lectures](https://www.youtube.com/playlist?list=PL3by7evD3F53Dz2RiB47Ztp9l_piGVuus)
 
 
 
