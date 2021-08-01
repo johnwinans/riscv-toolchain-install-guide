@@ -5,9 +5,15 @@ freestanding RISC-V Assembler and C/C++ programs.
 Note this repository is mainly a set links to the submodules and versions that I use as 
 described below.
 
-YouTube videos discussing the use of QEMU and these test programs;
+## YouTube videos discussing the use of QEMU and these test programs:
 
 - [Installation and Setup](https://youtu.be/iWQRV-KJ7tQ)
+
+A playlist of these and other RISC-V videos I have recorded:
+
+- [RISC-V Lectures](https://www.youtube.com/playlist?list=PL3by7evD3F53Dz2RiB47Ztp9l_piGVuus)
+
+
 
 ## Clone this repo:
 
