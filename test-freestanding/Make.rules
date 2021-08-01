@@ -27,13 +27,15 @@ TARGET_ARCH+=-march=$(MARCH)
 TARGET_ARCH+=-mabi=$(MABI)
 
 LDFLAGS+=-nostdlib
-ASFLAGS+=$(CFLAGS)
 
+ASFLAGS+=$(CFLAGS)
+ASFLAGS+=-Wa,-alh=$@.lst,-L
 
 CLEAN_DIRS=$(SUBDIRS:%=clean-%)
 ALL_DIRS=$(SUBDIRS:%=all-%)
 
 OBJDUMPFLAGS+=-Mnumeric,no-aliases
+OBJDUMPFLAGS+=-S
 
 .PHONY: all clean world $(CLEAN_DIRS) $(ALL_DIRS)
 
@@ -60,7 +62,7 @@ all:: $(ALL_DIRS)
 	$(COMPILE.c) -o $@ $<
 
 %.o: %.S
-	$(COMPILE.c) -o $@ $<
+	$(COMPILE.S) -o $@ $<
 
 %.o: %.cc
 	$(COMPILE.cc) -o $@ $<
