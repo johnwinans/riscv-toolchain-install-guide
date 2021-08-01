@@ -5,6 +5,10 @@ freestanding RISC-V Assembler and C/C++ programs.
 Note this repository is mainly a set links to the submodules and versions that I use as 
 described below.
 
+YouTube videos discussing the use of QEMU and these test programs;
+
+- [Installation and Setup](https://youtu.be/iWQRV-KJ7tQ)
+
 ## Clone this repo:
 
 ```bash
