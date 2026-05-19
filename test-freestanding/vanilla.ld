@@ -19,26 +19,16 @@ SECTIONS
 {
 	. = ORIGIN(RAM);
 
-	PROVIDE(__ram_origin__ = ORIGIN(RAM));
-	PROVIDE(__ram_end__ = ORIGIN(RAM) + LENGTH(RAM));
-
-	.text : 
-	{
-		__text_start = .;
+	.text : {
 		KEEP(*(.text.crt0))		/* this is why _start comes before any other function */
 		*(.text.*)
-		__text_end = .;
 	}
 
-	/*. = ALIGN(0x10);*/	/* putting this here does not cause the followng section to move */
-
-	.rodata : /*ALIGN(0x10):*/	/* this will the align section but others can overlap */
+	.rodata :
 	{
 		. = ALIGN(0x10);		/* aligning here will align the section & update the loc counter */
-		__rodata_start = .;
 		*(.rodata.*)
 		*(.srodata.*)
-		__rodata_end = .;
 	}
 
 	.data : 
@@ -47,43 +37,22 @@ SECTIONS
 		__data_start = .;
 		*(.data.*) 
 		*(.sdata*) 				/* small data objects */
-		__data_end = .; 
 	}
 
-    __global_pointer$ = (__data_start + 0x800);	/* stick this somewhere potentially useful */
-
-	
-/**/
-  .preinit_array    :
-  {
-    PROVIDE_HIDDEN (__preinit_array_start = .);
-    KEEP (*(.preinit_array))
-    PROVIDE_HIDDEN (__preinit_array_end = .);
-  }
-  .init_array    :
-  {
-    PROVIDE_HIDDEN (__init_array_start = .);
-    KEEP (*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
-    KEEP (*(.init_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .ctors))
-    PROVIDE_HIDDEN (__init_array_end = .);
-  }
-  .fini_array    :
-  {
-    PROVIDE_HIDDEN (__fini_array_start = .);
-    KEEP (*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
-    KEEP (*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
-    PROVIDE_HIDDEN (__fini_array_end = .);
-  }
-/**/
+    PROVIDE(__global_pointer$ = (__data_start + 0x800));	/* PROVIDE global pinter address */
 
 	.bss : 
 	{
 		. = ALIGN(0x100);
 		__bss_start__ = .;
+  		PROVIDE(__bss_start = __bss_start__); /* Need to PROVIDE this as it is used in crt0.S */
 		*(.sbss*) 			/* small data objects */
 		*(.bss*) 
 		__bss_end__ = .;
+  		PROVIDE(__bss_end = __bss_end__); /* Need to PROVIDE this as it is used in crt0.S */
 	}
 
+	. = ALIGN(16); 
+  	PROVIDE(_init_stack_top = ORIGIN(RAM) + LENGTH(RAM)); /* Setting top of the stack last memory address. Need to PROVIDE this as it is used in crt0.S */
 	_end = .; 
 }
