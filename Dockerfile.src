@@ -39,3 +39,4 @@ RUN apt-get update && apt-get install -y \
 COPY --from=builder /opt/riscv /opt/riscv
 COPY --from=builder /tmp/gdb-dashboard/.gdbinit /root/.gdbinit
 ENV PATH="/opt/riscv/bin:$PATH"
+ENV RISCV_TOOLCHAIN_ROOT="/opt/riscv/bin"

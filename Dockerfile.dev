@@ -12,6 +12,9 @@ ARG USERNAME=user
 ARG UID=1000
 ARG GID=1000
 
+# Install the CMake cross-compilation toolchain file
+COPY riscv.cmake /usr/local/share/cmake/riscv.cmake
+
 RUN apt-get update && apt-get install -y \
     bash-completion \
     cmake \

@@ -171,12 +171,35 @@ cp gdb-dashboard/.gdbinit ~
 
 ## Build the test app
 
+### Using Make
+
 ```bash
 cd test-freestanding
 make
 ```
 
 To do a clean rebuild: `make world`
+
+### Using CMake
+
+A CMake toolchain file is provided for cross-compilation. Inside the dev
+containers it is pre-installed at `/usr/local/share/cmake/riscv.cmake`.
+For native setups, pass the path to the file in this repository:
+
+```bash
+cmake -B build -S test-freestanding \
+      -DCMAKE_TOOLCHAIN_FILE=riscv.cmake
+cmake --build build
+```
+
+If your toolchain is installed somewhere other than `/usr/bin` (e.g. a
+from-source build in `/opt/riscv`), set `RISCV_TOOLCHAIN_ROOT`:
+
+```bash
+cmake -B build -S test-freestanding \
+      -DCMAKE_TOOLCHAIN_FILE=riscv.cmake \
+      -DRISCV_TOOLCHAIN_ROOT=/opt/riscv/bin
+```
 
 ## Run in QEMU
 
