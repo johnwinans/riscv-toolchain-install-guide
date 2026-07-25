@@ -22,9 +22,9 @@ prog: crt0.o
 .PHONY: test
 test: prog
 	@echo "🚀 Running executable and checking output..."
-	@timeout 5 qemu-system-riscv32 -machine virt -m 128M -bios none \
+	@qemu-system-riscv32 -machine virt -m 128M -bios none \
 		-device loader,file=./prog -nographic 2>/dev/null | \
-		grep -m1 "Hello World!" > /dev/null
+		grep -q "Hello World!"
 	@echo "✅ Test passed"
 
 clean::

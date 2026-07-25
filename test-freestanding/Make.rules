@@ -26,6 +26,9 @@ CFLAGS+=-fno-pic
 TARGET_ARCH+=-march=$(MARCH)
 TARGET_ARCH+=-mabi=$(MABI)
 
+# COMPILE.S uses TARGET_MACH (not TARGET_ARCH), so mirror the arch flags there too.
+TARGET_MACH=$(TARGET_ARCH)
+
 LDFLAGS+=-nostdlib
 
 ASFLAGS+=$(CFLAGS)

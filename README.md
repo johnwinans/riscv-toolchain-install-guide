@@ -184,7 +184,8 @@ To do a clean rebuild: `make world`
 qemu-system-riscv32 -machine virt -m 128M -bios none -device loader,file=./prog -nographic
 ```
 
-You should see `Hello World!` printed. To terminate QEMU press `CTRL+A` then `x`.
+You should see `Hello World!` printed and QEMU will exit automatically.
+If running your own code that has no shutdown, press `CTRL+A` then `x` to terminate QEMU.
 
 ## Run the automated test
 
