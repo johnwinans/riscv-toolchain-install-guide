@@ -9,8 +9,14 @@ OUTPUT_ARCH(riscv)
 
 MEMORY
 {
-   /* qemu-system-risc32 virt machine */
-   RAM (rwx)  : ORIGIN = 0x80000000, LENGTH = 128M 
+   /* qemu-system-riscv32 virt machine */
+   RAM (rwx)  : ORIGIN = 0x80000000, LENGTH = 128M
+}
+
+PHDRS
+{
+    text PT_LOAD FLAGS(5);   /* PF_R(4) | PF_X(1) */
+    data PT_LOAD FLAGS(6);   /* PF_R(4) | PF_W(2) */
 }
 
 ENTRY(_start) /* this will cause an error if the symbol _start is not present */
@@ -22,13 +28,13 @@ SECTIONS
 	PROVIDE(__ram_origin__ = ORIGIN(RAM));
 	PROVIDE(__ram_end__ = ORIGIN(RAM) + LENGTH(RAM));
 
-	.text : 
+	.text :
 	{
 		__text_start = .;
 		KEEP(*(.text.crt0))		/* this is why _start comes before any other function */
 		*(.text.*)
 		__text_end = .;
-	}
+	} >RAM :text
 
 	/*. = ALIGN(0x10);*/	/* putting this here does not cause the followng section to move */
 
@@ -39,51 +45,50 @@ SECTIONS
 		*(.rodata.*)
 		*(.srodata.*)
 		__rodata_end = .;
-	}
+	} >RAM :text
 
-	.data : 
-	{ 
+	.data :
+	{
 		. = ALIGN(0x1000);
 		__data_start = .;
-		*(.data.*) 
-		*(.sdata*) 				/* small data objects */
-		__data_end = .; 
-	}
+		*(.data.*)
+		*(.sdata*)				/* small data objects */
+		__data_end = .;
+	} >RAM :data
 
     __global_pointer$ = (__data_start + 0x800);	/* stick this somewhere potentially useful */
 
-	
 /**/
-  .preinit_array    :
+  .preinit_array :
   {
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array))
     PROVIDE_HIDDEN (__preinit_array_end = .);
-  }
-  .init_array    :
+  } >RAM :data
+  .init_array :
   {
     PROVIDE_HIDDEN (__init_array_start = .);
     KEEP (*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
     KEEP (*(.init_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .ctors))
     PROVIDE_HIDDEN (__init_array_end = .);
-  }
-  .fini_array    :
+  } >RAM :data
+  .fini_array :
   {
     PROVIDE_HIDDEN (__fini_array_start = .);
     KEEP (*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
     KEEP (*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
     PROVIDE_HIDDEN (__fini_array_end = .);
-  }
+  } >RAM :data
 /**/
 
-	.bss : 
+	.bss :
 	{
 		. = ALIGN(0x100);
 		__bss_start__ = .;
-		*(.sbss*) 			/* small data objects */
-		*(.bss*) 
+		*(.sbss*)			/* small data objects */
+		*(.bss*)
 		__bss_end__ = .;
-	}
+	} >RAM :data
 
 	_end = .; 
 }

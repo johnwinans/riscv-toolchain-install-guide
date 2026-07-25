@@ -1,0 +1,57 @@
+# Dev container layer — adds editor tools, shell enhancements, and a non-root
+# user on top of either the packages or from-source toolchain image.
+#
+# Usage:
+#   docker build -t riscv-dev .                                  (packages base)
+#   docker build --build-arg BASE=riscv-src -t riscv-src-dev .  (source base)
+
+ARG BASE=riscv
+FROM ${BASE}
+
+ARG USERNAME=user
+ARG UID=1000
+ARG GID=1000
+
+RUN apt-get update && apt-get install -y \
+    bash-completion \
+    cmake \
+    curl \
+    fd-find \
+    jq \
+    less \
+    man-db \
+    nano \
+    python3 \
+    ripgrep \
+    sudo \
+    tmux \
+    tree \
+    vim \
+    wget \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Non-root user with passwordless sudo
+RUN groupadd --gid ${GID} ${USERNAME} \
+    && useradd --uid ${UID} --gid ${GID} --shell /bin/bash \
+               --create-home ${USERNAME} \
+    && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" \
+       > /etc/sudoers.d/${USERNAME} \
+    && chmod 0440 /etc/sudoers.d/${USERNAME}
+
+# Copy gdb-dashboard into the user's home directory
+RUN if [ -f /root/.gdbinit ]; then \
+        cp /root/.gdbinit /home/${USERNAME}/.gdbinit \
+        && chown ${USERNAME}:${USERNAME} /home/${USERNAME}/.gdbinit; \
+    fi
+
+# Enable bash completion and colour prompt
+RUN { \
+    echo ''; \
+    echo '# bash completion'; \
+    echo '[ -f /usr/share/bash-completion/bash_completion ] && . /usr/share/bash-completion/bash_completion'; \
+    echo ''; \
+    echo 'force_color_prompt=yes'; \
+    } >> /home/${USERNAME}/.bashrc
+
+USER ${USERNAME}
+WORKDIR /home/${USERNAME}

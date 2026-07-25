@@ -1,5 +1,5 @@
 
-ARCH=riscv32-unknown-elf
+ARCH=riscv64-unknown-elf
 
 
 CC=$(ARCH)-gcc
@@ -12,7 +12,7 @@ SIZE=$(ARCH)-size
 AR=$(ARCH)-ar
 RANLIB=$(ARCH)-ranlib
 
-MARCH=rv32ima
+MARCH=rv32i_zicsr
 MABI=ilp32
 
 CFLAGS+=-Wall -Werror

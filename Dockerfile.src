@@ -1,0 +1,41 @@
+FROM ubuntu:26.04 AS builder
+
+ARG TOOLCHAIN_BRANCH=2026.07.15
+
+COPY installdeps-src.sh buildall.sh ./
+RUN bash installdeps-src.sh && rm installdeps-src.sh
+
+RUN git clone --depth 1 --branch ${TOOLCHAIN_BRANCH} \
+    https://github.com/riscv-collab/riscv-gnu-toolchain /riscv-gnu-toolchain \
+    && git -C /riscv-gnu-toolchain submodule update --init binutils gcc newlib qemu
+
+RUN bash buildall.sh /opt/riscv /riscv-gnu-toolchain \
+    && rm buildall.sh \
+    && rm -rf /riscv-gnu-toolchain
+
+RUN git clone --depth 1 https://github.com/cyrus-and/gdb-dashboard.git /tmp/gdb-dashboard
+
+FROM ubuntu:26.04
+
+ARG LOCALE=en_GB
+
+RUN apt-get update && apt-get upgrade -y && apt-get install -y locales \
+    && localedef -i ${LOCALE} -c -f UTF-8 ${LOCALE}.UTF-8 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+ENV LANG=${LOCALE}.utf8
+
+# Runtime libraries needed by the built cross-compiler and QEMU
+RUN apt-get update && apt-get install -y \
+    gdb-multiarch \
+    make \
+    libfdt1 \
+    libglib2.0-0t64 \
+    libgmp10 \
+    libmpc3 \
+    libmpfr6 \
+    libpixman-1-0 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /opt/riscv /opt/riscv
+COPY --from=builder /tmp/gdb-dashboard/.gdbinit /root/.gdbinit
+ENV PATH="/opt/riscv/bin:$PATH"
