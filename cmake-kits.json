@@ -1,0 +1,6 @@
+[
+  {
+    "name": "RISC-V rv32 (bare metal)",
+    "toolchainFile": "/usr/local/share/cmake/riscv.cmake"
+  }
+]

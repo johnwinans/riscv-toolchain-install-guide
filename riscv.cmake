@@ -35,7 +35,7 @@ set(ARCH_FLAGS "-march=rv32i_zicsr -mabi=ilp32")
 set(CMAKE_C_FLAGS_INIT   "${ARCH_FLAGS} -ffreestanding -fno-pic")
 set(CMAKE_CXX_FLAGS_INIT "${ARCH_FLAGS} -ffreestanding -fno-pic")
 set(CMAKE_ASM_FLAGS_INIT "${ARCH_FLAGS} -ffreestanding -fno-pic")
-set(CMAKE_EXE_LINKER_FLAGS_INIT "-nostdlib")
+set(CMAKE_EXE_LINKER_FLAGS_INIT "-nostdlib" ${ARCH_FLAGS})
 
 # --- Bare-metal: skip the linker during compiler detection --------------
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)

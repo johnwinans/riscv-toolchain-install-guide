@@ -66,5 +66,8 @@ RUN { \
     echo 'force_color_prompt=yes'; \
     } >> /home/${USERNAME}/.bashrc
 
+
 USER ${USERNAME}
+COPY --chown=${UID}:${GID} asm-breakpoints /home/${USERNAME}/.vscode-server/extensions/local.asm-breakpoints-0.0.2
+COPY --chown=${UID}:${GID} cmake-kits.json /home/${USERNAME}/.local/share/CMakeTools/cmake-tools-kits.json
 WORKDIR /home/${USERNAME}

@@ -15,6 +15,7 @@ ${APT} install -y \
     gcc-riscv64-unknown-elf \
     picolibc-riscv64-unknown-elf \
     qemu-system-riscv \
+    device-tree-compiler \
     gdb-multiarch \
     git \
     make
