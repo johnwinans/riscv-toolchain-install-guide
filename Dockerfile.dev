@@ -24,6 +24,7 @@ RUN apt-get update && apt-get install -y \
     less \
     man-db \
     nano \
+    ninja-build \
     python3 \
     python3-pygments \
     ripgrep \

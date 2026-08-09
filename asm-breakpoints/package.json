@@ -13,7 +13,7 @@
       {
         "id": "riscv",
         "aliases": ["RISC-V Assembly", "riscv"],
-        "extensions": [".S", ".s", ".riscv"],
+        "extensions": [".S", ".s", ".riscv", ".S.inc", ".s.inc"],
         "configuration": "./language-configuration.json"
       }
     ],
