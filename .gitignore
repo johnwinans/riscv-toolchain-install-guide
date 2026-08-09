@@ -1,1 +1,3 @@
 .gdb_history
+build.log
+test-freestanding/build/

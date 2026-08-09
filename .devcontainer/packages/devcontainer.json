@@ -1,0 +1,25 @@
+{
+    "name": "RISC-V Dev (packages)",
+    "build": {
+        "dockerfile": "../../Dockerfile.dev",
+        "context": "../..",
+        "args": {
+            "BASE": "riscv"
+        }
+    },
+    "remoteUser": "user",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "ms-vscode.cpptools-themes",
+                "ms-vscode.hexeditor"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "C_Cpp.default.compilerPath": "/usr/bin/riscv64-unknown-elf-gcc",
+                "C_Cpp.default.intelliSenseMode": "gcc-arm"
+            }
+        }
+    }
+}

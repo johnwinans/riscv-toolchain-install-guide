@@ -1,0 +1,114 @@
+{
+  "name": "asm-breakpoints",
+  "version": "0.0.2",
+  "engines": { "vscode": "^1.80.0" },
+  "publisher": "local",
+  "main": "./extension.js",
+  "activationEvents": [
+    "onDebugResolve:riscv-qemu",
+    "onDebugInitialConfigurations"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "riscv",
+        "aliases": ["RISC-V Assembly", "riscv"],
+        "extensions": [".S", ".s", ".riscv", ".S.inc", ".s.inc"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "breakpoints": [{ "language": "riscv" }],
+    "debuggers": [
+      {
+        "type": "riscv-qemu",
+        "label": "RISC-V (QEMU + gdb)",
+        "languages": ["riscv"],
+        "configurationAttributes": {
+          "launch": {
+            "required": ["program"],
+            "properties": {
+              "program": {
+                "type": "string",
+                "description": "Path to the ELF to load and debug.",
+                "default": "${workspaceFolder}/prog"
+              },
+              "qemuPath": {
+                "type": "string",
+                "description": "QEMU system emulator binary.",
+                "default": "qemu-system-riscv32"
+              },
+              "machine": {
+                "type": "string",
+                "description": "QEMU -machine value.",
+                "default": "virt"
+              },
+              "memory": {
+                "type": "string",
+                "description": "QEMU -m value.",
+                "default": "128M"
+              },
+              "bios": {
+                "type": "string",
+                "description": "QEMU -bios value ('none' for a bare-metal image loaded via -device loader).",
+                "default": "none"
+              },
+              "gdbPath": {
+                "type": "string",
+                "description": "gdb binary used by cpptools to connect to QEMU.",
+                "default": "gdb-multiarch"
+              },
+              "gdbPort": {
+                "type": "number",
+                "description": "TCP port for QEMU's gdb stub.",
+                "default": 1234
+              },
+              "cwd": {
+                "type": "string",
+                "description": "Working directory for QEMU.",
+                "default": "${workspaceFolder}"
+              },
+              "qemuArgs": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Extra arguments appended to the QEMU command line.",
+                "default": []
+              },
+              "stopAtEntry": {
+                "type": "boolean",
+                "description": "Halt at the entry point instead of running immediately.",
+                "default": true
+              },
+              "setupCommands": {
+                "type": "array",
+                "description": "Extra gdb/MI setup commands passed through to cpptools.",
+                "default": []
+              }
+            }
+          }
+        },
+        "initialConfigurations": [
+          {
+            "type": "riscv-qemu",
+            "request": "launch",
+            "name": "RISC-V (QEMU)",
+            "program": "${workspaceFolder}/prog",
+            "stopAtEntry": true
+          }
+        ],
+        "configurationSnippets": [
+          {
+            "label": "RISC-V: Debug bare-metal ELF under QEMU",
+            "description": "Start qemu-system-riscv32 with a gdb stub and attach cpptools.",
+            "body": {
+              "type": "riscv-qemu",
+              "request": "launch",
+              "name": "RISC-V (QEMU)",
+              "program": "^\"\\${workspaceFolder}/prog\"",
+              "stopAtEntry": true
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

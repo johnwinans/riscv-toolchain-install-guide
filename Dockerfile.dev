@@ -1,0 +1,74 @@
+# Dev container layer — adds editor tools, shell enhancements, and a non-root
+# user on top of either the packages or from-source toolchain image.
+#
+# Usage:
+#   docker build -t riscv-dev .                                  (packages base)
+#   docker build --build-arg BASE=riscv-src -t riscv-src-dev .  (source base)
+
+ARG BASE=riscv
+FROM ${BASE}
+
+ARG USERNAME=user
+ARG UID=1000
+ARG GID=1000
+
+# Install the CMake cross-compilation toolchain file
+COPY riscv.cmake /usr/local/share/cmake/riscv.cmake
+
+RUN apt-get update && apt-get install -y \
+    bash-completion \
+    cmake \
+    curl \
+    fd-find \
+    jq \
+    less \
+    man-db \
+    nano \
+    ninja-build \
+    python3 \
+    python3-pygments \
+    ripgrep \
+    sudo \
+    tmux \
+    tree \
+    vim \
+    wget \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Non-root user with passwordless sudo
+RUN if ! getent group ${GID} >/dev/null; then \
+        groupadd --gid ${GID} ${USERNAME}; \
+    fi \
+    && if ! getent passwd ${UID} >/dev/null; then \
+        useradd --uid ${UID} --gid ${GID} --shell /bin/bash \
+                --create-home ${USERNAME}; \
+    else \
+        mkdir -p /home/${USERNAME} \
+        && chown ${UID}:${GID} /home/${USERNAME} \
+        && usermod --login ${USERNAME} --home /home/${USERNAME} \
+                   --shell /bin/bash $(getent passwd ${UID} | cut -d: -f1); \
+    fi \
+    && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" \
+       > /etc/sudoers.d/${USERNAME} \
+    && chmod 0440 /etc/sudoers.d/${USERNAME}
+
+# Copy gdb-dashboard into the user's home directory
+RUN if [ -f /root/.gdbinit ]; then \
+        cp /root/.gdbinit /home/${USERNAME}/.gdbinit \
+        && chown ${UID}:${GID} /home/${USERNAME}/.gdbinit; \
+    fi
+
+# Enable bash completion and colour prompt
+RUN { \
+    echo ''; \
+    echo '# bash completion'; \
+    echo '[ -f /usr/share/bash-completion/bash_completion ] && . /usr/share/bash-completion/bash_completion'; \
+    echo ''; \
+    echo 'force_color_prompt=yes'; \
+    } >> /home/${USERNAME}/.bashrc
+
+
+USER ${USERNAME}
+COPY --chown=${UID}:${GID} asm-breakpoints /home/${USERNAME}/.vscode-server/extensions/local.asm-breakpoints-0.0.2
+COPY --chown=${UID}:${GID} cmake-kits.json /home/${USERNAME}/.local/share/CMakeTools/cmake-tools-kits.json
+WORKDIR /home/${USERNAME}

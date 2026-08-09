@@ -1,20 +1,23 @@
 #!/bin/bash
+# Install the RISC-V toolchain from Ubuntu packages.
+# Works as a normal user (uses sudo) or as root (e.g. inside Docker).
+set -euo pipefail
 
-# This was tested on Ubuntu 20.04
+if [ "$(id -u)" -eq 0 ]; then
+    APT="apt-get"
+else
+    APT="sudo apt-get"
+fi
 
-
-# for the GNU toolchain
-sudo apt-get install autoconf automake autotools-dev curl python3 libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev
-
-# This is used by GDB so can run a dashboard script
-sudo apt-get install python-dev
-
-
-
-# The following may not be necessary on 20.04.  But my tests included it.
-sudo apt install ninja-build libglib2.0-dev libpixman-1-dev
-
-
-# This is a useful tool for viewing the configuration of the QEMU-emulated machines
-sudo apt install device-tree-compiler
-
+${APT} update
+${APT} install -y \
+    binutils-riscv64-unknown-elf \
+    gcc-riscv64-unknown-elf \
+    picolibc-riscv64-unknown-elf \
+    qemu-system-riscv \
+    device-tree-compiler \
+    gdb-multiarch \
+    git \
+    make
+${APT} clean
+rm -rf /var/lib/apt/lists/*

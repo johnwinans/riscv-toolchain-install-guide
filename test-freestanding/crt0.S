@@ -27,9 +27,16 @@ _start:     // This has to match the entry address in the ld script!!
     // disable ALL irqs
     csrw    mie,x0
 
-    // Spin while waiting for an interrupt that can never arrive. (Seize the hart.)
+    // Shut down the QEMU virt machine via the sifive_test device (FINISHER_PASS = 0x5555).
+    // This causes qemu-system-riscv32 to exit with status 0 so automated tests can detect
+    // completion without a timeout.
+    li      x5,0x100000         // sifive_test device base address
+    li      x6,0x5555           // FINISHER_PASS
+    sw      x6,0(x5)
+
+    // Fallback spin in case the write above is somehow delayed.
 1:
-    wfi                         // This will prevent qemu from using 100% of a host core!
+    wfi
     j       1b
 
     .cfi_endproc

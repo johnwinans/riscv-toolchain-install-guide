@@ -1,7 +1,7 @@
 TOP=.
 include $(TOP)/Make.rules
 
-LDLIBS=-lc -lgcc
+LDLIBS=-lgcc
 CFLAGS+=-O2
 
 #LDFLAGS+=-Wl,--no-relax
@@ -9,11 +9,23 @@ LDFLAGS+=-Wl,-T,vanilla.ld
 
 PROGS=prog prog.lst
 
+all::
+	@echo "⚙️  Compiling test code..."
+
 all:: $(PROGS)
+	@echo "✅ Build complete"
 
 prog: crt0.o
 	$(LINK.c) -o $@ $^ $(LDLIBS)
 	$(SIZE) -A -x $@
+
+.PHONY: test
+test: prog
+	@echo "🚀 Running executable and checking output..."
+	@qemu-system-riscv32 -machine virt -m 128M -bios none \
+		-device loader,file=./prog -nographic 2>/dev/null | \
+		grep -q "Hello World!"
+	@echo "✅ Test passed"
 
 clean::
 	rm -f $(PROGS) *.o *.s *.lst

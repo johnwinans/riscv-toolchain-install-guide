@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --check extension.js)",
+      "Bash(git submodule *)",
+      "Bash(git -C riscv-gnu-toolchain status --short)",
+      "Bash(git add *)"
+    ]
+  }
+}
